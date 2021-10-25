@@ -21,8 +21,8 @@ x = <input type=number id=hx value=0 onChange="calculate()">
 &emsp;
 p = <input type=number id=hp value=0.3 onChange="calculate()">
 &emsp;
-<span id=res></span>
-<pre id=out><b>Table</b></pre>
+<span id=result></span>
+<pre id=binomialTable><b>Table</b></pre>
 
 <hr />
 <b>Sample code</b>
@@ -34,7 +34,7 @@ p = <input type=number id=hp value=0.3 onChange="calculate()">
 </p>
 
 <script>
-"use strict";
+
 function fact(n){
     let f =1;
     for(let i=1; i<=n;i++){
@@ -57,9 +57,9 @@ function calculate() {
         n = Math.round(n); hn.value = n
      }
      let p = Number(hp.value)
-    res.innerText = "F(n, x, p) = "+Binomial(n, x, p)
+    result.innerText = "F(n, x, p) = "+Binomial(n, x, p)
 }
-function doTable() {
+function creatTable() {
     const PS = [0.01,0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
     let a = PS.map((p) => 'p='+p)
     for (let k=0; k<a.length; k++) {
@@ -77,13 +77,14 @@ function doTable() {
     }
     return str
 }
-let header  = (a) => '         '+ a.join(' ')  //pre
+let header  = (a) => '         '+ a.join(' ')  
 let oneLine = (a, x, n) => '\nn='+n+' x='+x+'  '+ a.join('  ')
     
     title.innerText = document.title
-    sample.innerText = Binomial+'\n'+doTable
+    sample.innerText = Binomial+'\n'+creatTable
     calculate()
-    out.innerText = doTable()
+    binomialTable.innerText = creatTable()
+
 </script>
 
 </body>
