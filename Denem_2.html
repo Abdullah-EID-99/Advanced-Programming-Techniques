@@ -60,8 +60,8 @@ function calculate() {
     res.innerText = "F(n, x, p) = "+Binomial(n, x, p)
 }
 function doTable() {
-    const L = [0.01,0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
-    let a = L.map((p) => 'p='+p)
+    const PS = [0.01,0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
+    let a = PS.map((p) => 'p='+p)
     for (let k=0; k<a.length; k++) {
         if(a[k].length<6){
             a[k] += ' '
@@ -70,7 +70,7 @@ function doTable() {
     let str = header(a)
     for (let n=2; n<=7; n++) { 
         for (let x=0; x<=n; x++) { 
-            let a = L.map((p) => Binomial(n, x, p))
+            let a = PS.map((p) => Binomial(n, x, p))
             str += oneLine(a, x, n)
         }
         str+='\n'
