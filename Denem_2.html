@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Binomial Probabilities</title>
+
+  <style>
+    body { max-width: 440px; }
+    pre  { overflow-x: auto; }
+    input { width: 50px }
+  </style>
+</head>
+
+<body>
+
+<h2 id=title></h2>
+n = <input type=number id=hn value=2 onChange="calculate()">
+&emsp;
+x = <input type=number id=hx value=0 onChange="calculate()">
+&emsp;
+p = <input type=number id=hp value=0.3 onChange="calculate()">
+&emsp;
+<span id=res></span>
+<pre id=out><b>Table</b></pre>
+
+<hr />
+<b>Sample code</b>
+<pre id=sample></pre>
+
+<hr />
+<p>Ref: <a href="https://sjsu.edu/people/saul.cohn/courses/stats/s0/BinomialProbabTable.pdf" 
+   target="NewTab">Binomial Table</a>
+</p>
+
+<script>
+"use strict";
+function fact(n){
+    let f =1;
+    for(let i=1; i<=n;i++){
+        f *= i;
+    }
+    return f;
+  }
+  //F(x) =(n!/(n-x)!x!)(p^x)(1-p)^(n-x)  => Binomial distribution
+  function Binomial(n, x, p) {
+      let fx = (fact(n)/(fact(n-x)* fact(x)))*(Math.pow(p,x)*Math.pow(1-p,n-x))
+      return fx.toFixed(3)
+  }
+function calculate() {
+    let x = Number(hx.value)
+    if (!Number.isInteger(x)) {
+       x = Math.round(x); hx.value = x
+    }
+    let n = Number(hn.value)
+    if (!Number.isInteger(n)) {
+        n = Math.round(n); hn.value = n
+     }
+     let p = Number(hp.value)
+    res.innerText = "F(n, x, p) = "+Binomial(n, x, p)
+}
+function doTable() {
+    const L = [0.01,0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
+    let a = L.map((p) => 'p='+p)
+    for (let k=0; k<a.length; k++) {
+        if(a[k].length<6){
+            a[k] += ' '
+        }
+    }
+    let str = header(a)
+    for (let n=2; n<=7; n++) { 
+        for (let x=0; x<=n; x++) { 
+            let a = L.map((p) => Binomial(n, x, p))
+            str += oneLine(a, x, n)
+        }
+        str+='\n'
+    }
+    return str
+}
+let header  = (a) => '         '+ a.join(' ')  //pre
+let oneLine = (a, x, n) => '\nn='+n+' x='+x+'  '+ a.join('  ')
+    
+    title.innerText = document.title
+    sample.innerText = Binomial+'\n'+doTable
+    calculate()
+    out.innerText = doTable()
+</script>
+
+</body>
+</html>
