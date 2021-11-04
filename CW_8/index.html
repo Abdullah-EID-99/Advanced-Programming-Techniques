@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Remote URL or Local file </title>
+
+<style>
+  body { max-width: 500px; }
+  div { margin: 12px 0; }
+  img {
+    max-width: 100%;
+    border: 1px solid darkgray;
+  }
+  #remote {
+    width: 290px;
+    font: 13px arial, sans-serif;
+    margin: 14px 0;
+    border: 1px solid darkgray;
+    padding: 5px;
+  }
+  #sample, #out { overflow-x: auto; }
+  #disp1 { color: blue; }
+</style>
+</head>
+
+<body>
+<h2 id=title></h2>
+
+<div>
+  Buffer text: 
+  <input type=text id=remote onchange='shaFromBuffer(this.value)'> <br>
+  URL: 
+  <input type=text id=remote onchange='shaFromURL(this.value)'> <br>
+  <input type=file id=button onChange='shaFromFile(this.files[0])'>
+</div>
+<div id=msg>Select text or image </div>
+<pre id=disp1></pre> <img id=disp2 />
+
+<hr>
+<b>Sample code</b>
+<pre id=sample></pre>
+<hr>
+<p>Ref: 
+    <a href="Objects">Objects</a> &nbsp;
+    <a href="Reading_files">Reading files</a>
+ </p>
+
+<script>
+"use strict";
+function shaFromBuffer(b){
+  crypto.subtle.digest('SHA-1', new TextEncoder().encode(b))
+  .then(s => console.log(bufferToHEX(s)))
+  .catch(console.error)
+}  //ArrayBuffer 
+function shaFromFile(f) { //File or Blob
+  shaFromBuffer(f.arrayBuffer())
+}
+function shaFromURL(u){ //URL or string
+  fetch(u).then(r => shaFromFile(r.blob()))
+}
+function bufferToHEX(b){
+  return [...new Uint8Array(b)].join('')
+  //toHex function does not work
+}
+function shaFromXXX(f){
+  if(f instanceof String){
+     shaFromBuffer(f)
+  }else if(f instanceof Blob){
+    shaFromFile(f)
+  }else if(f instanceof URL){
+    shaFromURL(f)
+  }
+
+}
+title.innerText = document.title
+sample.innerText = shaFromBuffer+'\n'+shaFromFile+'\n'+shaFromURL+'\n'+bufferToHEX +'\n'+shaFromXXX
+</script>
+
+</body>
+</html>
