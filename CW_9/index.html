@@ -6,9 +6,15 @@
     <title>Binomial Probabilities</title>
 
   <style>
-    body { max-width: 440px; }
-    pre  { overflow-x: auto; }
+    body { max-width: 400px; }
+    pre  { 
+        overflow-x: auto;
+        color: blue; 
+        font-size: 12px;
+    }
     input { width: 50px }
+    img{width: 400px;height: 400px;}
+    
   </style>
 </head>
 
@@ -28,6 +34,8 @@ p = <input type=number id=hp value=0.3 onChange="calculate()">
 <b>Sample code</b>
 <pre id=sample></pre>
 <hr />
+<img src="mathTable.png" alt="">
+<hr />
 <p>Ref: <a href="https://sjsu.edu/people/saul.cohn/courses/stats/s0/BinomialProbabTable.pdf" 
    target="NewTab">Binomial Table</a>
 </p>
@@ -43,7 +51,8 @@ function fact(n){
   }
   //F(x) =(n!/(n-x)!x!)(p^x)(1-p)^(n-x)  => Binomial distribution
   function Binomial(n, x, p) {
-      let fx = (fact(n)/(fact(n-x)* fact(x)))*(Math.pow(p,x)*Math.pow(1-p,n-x))
+      let fx = (fact(n)/(fact(n-x)* fact(x)))
+                *(Math.pow(p,x)*Math.pow(1-p,n-x))
       return fx.toFixed(3)
   }
 function calculate() {
@@ -56,7 +65,7 @@ function calculate() {
         n = Math.round(n); hn.value = n
      }
      let p = Number(hp.value)
-    result.innerText = "F(n, x, p) = "+Binomial(n, x, p)
+    result.innerText = "\n\nF(n, x, p) = "+Binomial(n, x, p)
 }
 function creatTable() {
     const PS = [0.01,0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
