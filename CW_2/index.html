@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>İlk Ödev</title>
+
+  <style> /* CSS comment */
+    body { max-width: 400px; 
+          }
+    p {
+        font-size: 16px;
+        background: blue;
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+    pre{
+      font-style: italic;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>  
+
+<p>The code</p>
+<pre>the place of the code</pre>
+<hr />
+<p>The output</p>
+<pre>the place of the output</pre>
+<hr />
+<p>The second code</p>
+<pre>the place of the second code</pre>
+
+<script>
+"use strict";
+// JavaScript comment
+// Your code here.
+function range(a,b,direction=1) {
+  let result = [];
+  if(direction == 1){
+  	for(let x=a; x<=b;x++){
+  		result.push(x);
+  	}
+  }else if(direction == -1){
+  	for(let x=a; x>=b;x--){
+  		result.push(x);
+  	}
+  }
+  return result;
+}
+function sum(array) {
+  let s = 0;
+  for(let x=0; x<array.length;x++){
+  	s += array[x];
+  }
+  return s;
+}
+console.log(range(1, 10));
+// → [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+console.log(range(5, 2, -1));
+// → [5, 4, 3, 2]
+console.log(sum(range(1, 10)));
+// → 55
+
+
+// Run code here in the context of Chapter 4
+let d=`let toplam = 0;
+for (let event of journalEvents(JOURNAL)) {
+  let counter = 0;
+  for(let x of JOURNAL){
+    if(event == x['event'][0]){
+      counter +=1;
+    }
+    let correlation = phi(tableFor(event, JOURNAL));
+    console.log(event + ":", correlation.toFixed(4)+" "+counter);
+    toplam +=counter;
+  }
+  console.log(toplam);
+}`
+
+// → brushed teeth: -0.3805211953
+// → work:          -0.1371988681
+// → reading:        0.1106828054  
+
+document.querySelector('pre').innerText = range+'\n'+sum
+document.querySelectorAll('pre')[1].innerText = 'range(1, 10) -> '+range(1, 10)+'\n'
+document.querySelectorAll('pre')[2].innerText = d
++'sum(range(1, 10)) -> '+sum(range(1, 10))
+</script>
+
+</body>
+</html>
