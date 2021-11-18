@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" href="https://blm-fsmvu.github.io/305/images/icon192.png">
+    <title id="mainTitle"></title>
+
+  <style> /* CSS comment */
+    body { max-width: 440px; }
+    #url { width: 190px; }
+    span, #lev, #url, #online, #board { 
+      color: blue; 
+    }
+   
+  </style>
+</head>
+
+<body>   <!-- HTML comment: Modify all items marked xxx -->
+
+<h2 id=title title="Put your name here"></h2>
+<button id="bt">enter and leave to change the color of the title </button>
+<h3>Battery Status</h3>
+<p id='lev'></p>
+<h3>Online Status</h3>
+<p id='online'></p>
+
+<h3>Keyboard</h3>
+<p id='board'></p>
+<hr />
+<b>Sample code</b>
+<pre id=sample>This text is not shown. Why?</pre>
+
+<hr />
+
+<script>
+"use strict";
+function init() {
+//complete the code below
+    title.innerText="ABDULLAH EID"
+    navigator.getBattery().then(b =>printBatteryStatus(b));
+    window.ononline = e =>online.innerText='connected -- '+e.type
+    window.onoffline = e =>online.innerText='disconnected -- '+e.type
+    window.onkeydown = e=>board.innerText=e.key
+    window.onkeyup = e=>board.innerText=''
+    window.bt.onmouseenter = e=> 
+        document.querySelector('h2').style.backgroundColor = 'green'
+    window.bt.onmouseleave = e=> 
+        document.querySelector('h2').style.backgroundColor = 'yellow'
+       
+}
+function printBatteryStatus(b){
+    let x =(b) => b.charging?'Charging':'Discharging';
+    b.onchargingchange = e=>lev.innerText=x(b)+' '+
+                        (b.level*100).toFixed(0)+'%';
+    b.onlevelchange = e=>lev.innerText=x(b)+' '+
+                        (b.level*100).toFixed(0)+'%'
+}
+
+    title.innerText = document.title;
+    sample.innerText = init+'\n'+printBatteryStatus;
+    init();
+</script>
+
+</body>
+</html>
