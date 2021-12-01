@@ -1,65 +1,110 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <link rel="icon" href="https://blm-fsmvu.github.io/305/images/icon192.png">
-    <title id="mainTitle"></title>
-
-  <style> /* CSS comment */
-    body { max-width: 440px; }
-    #url { width: 190px; }
-    span, #lev, #url, #online, #board { 
-      color: blue; 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>GitHub Users</title>
+  <style>
+    body {
+        max-width: 440px;
     }
-   
+    img {
+        padding-right: 12px; 
+        width: 200px;
+        float: left;
+    }
+    pre{
+      overflow-x: auto;
+    }
+    h2,p{
+      margin: 0%;
+    }
+    #unm { color: rgb(194, 181, 181); }
   </style>
 </head>
 
-<body>   <!-- HTML comment: Modify all items marked xxx -->
+<body>
 
-<h2 id=title title="Put your name here"></h2>
-<button id="bt">enter and leave to change the color of the title </button>
-<h3>Battery Status</h3>
-<p id='lev'></p>
-<h3>Online Status</h3>
-<p id='online'></p>
+<h2 id=title></h2>
+<input type=text id=usr value=abdullah-eid-99 onChange="readUser()">
+<pre id=image>
+</pre>
+<h2 id=nm></h2>
+<p id=unm></p><br>
+<p id=cl></p>
 
-<h3>Keyboard</h3>
-<p id='board'></p>
+
 <hr />
 <b>Sample code</b>
-<pre id=sample>This text is not shown. Why?</pre>
-
+<pre id=sample></pre>
 <hr />
+
 
 <script>
 "use strict";
-function init() {
-//complete the code below
-    title.innerText="ABDULLAH EID"
-    navigator.getBattery().then(b =>printBatteryStatus(b));
-    window.ononline = e =>online.innerText='connected -- '+e.type
-    window.onoffline = e =>online.innerText='disconnected -- '+e.type
-    window.onkeydown = e=>board.innerText=e.key
-    window.onkeyup = e=>board.innerText=''
-    window.bt.onmouseenter = e=> 
-        document.querySelector('h2').style.backgroundColor = 'green'
-    window.bt.onmouseleave = e=> 
-        document.querySelector('h2').style.backgroundColor = 'yellow'
-       
+function error(e) {
+    out.innerText = e
+    out.style.color = 'red'
+    console.error(e)
 }
-function printBatteryStatus(b){
-    let x =(b) => b.charging?'Charging':'Discharging';
-    b.onchargingchange = e=>lev.innerText=x(b)+' '+
-                        (b.level*100).toFixed(0)+'%';
-    b.onlevelchange = e=>lev.innerText=x(b)+' '+
-                        (b.level*100).toFixed(0)+'%'
+function cause(s) {
+  switch (s) {
+    case 403:
+      return 'Rate limit exceeded'
+    case 404:
+      return usr.value+' not found'
+    default:
+      return 'Status '+s
+  }
 }
-
-    title.innerText = document.title;
-    sample.innerText = init+'\n'+printBatteryStatus;
-    init();
+async function toJSON(url) {
+  try {
+    let r = await fetch(url)
+    if (!r.ok) throw cause(r.status)
+    return r.json()
+  } catch (e) {
+    error(e)
+  }
+}
+async function readUser() {
+    const URL = "https://api.github.com/users/"
+    const BR = '<BR>'
+    let u = await toJSON(URL+usr.value)
+    if (!u || !u.login) return
+    //start with avatar
+    image.innerHTML = `<img src="${u.avatar_url}">`
+    //add name and location
+    nm.innerHTML = u.name
+    unm.innerHTML = u.login
+    console.log(u.name+'-'+u.login)
+    let e='is not found'
+    cl.innerHTML = 'Company Name: '+
+    (u.company?u.company:e)
+    cl.innerHTML += BR+'Location: '+
+    (u.location?u.location:e)
+    cl.innerHTML += BR+'Email: '+
+    (u.email?
+    `<a href="https://${u.email}" target=NewTab>${u.email}</a>`
+    :e)
+    let n = u.public_repos
+    if(u.blog){
+      cl.innerHTML +=BR+'Blog Link: '+
+      `<a href="https://${u.blog}" target=NewTab>${u.blog}</a>`
+    }else{
+      cl.innerHTML +=BR+'blog link: is not found'
+    }
+     //add link to GitHub
+    let h = "github.com/"+u.login
+    cl.innerHTML +=BR+'Link of GitHub page : '+
+    `<a href="https://${h}" target=NewTab>${h}</a>`
+   
+    cl.innerHTML +=BR+'The number of public repos: '+
+    `${n}`+BR
+    
+}
+    title.innerText = document.title
+    sample.innerText = toJSON +'\n'+ readUser
+    readUser()
 </script>
 
 </body>
