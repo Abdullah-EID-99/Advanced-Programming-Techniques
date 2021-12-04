@@ -21,12 +21,12 @@
 <h2 id=title title="Put your name here"></h2>
 <button id="bt">enter and leave to change the color of the title </button>
 <h3>Battery Status</h3>
-<p id='lev'></p>
+<p id='lev'>Charging -- 10%</p>
 <h3>Online Status</h3>
-<p id='online'></p>
+<p id='online'>connected -- online</p>
 
 <h3>Keyboard</h3>
-<p id='board'></p>
+<p id='board'>key: </p>
 <hr />
 <b>Sample code</b>
 <pre id=sample>This text is not shown. Why?</pre>
@@ -41,8 +41,8 @@ function init() {
     navigator.getBattery().then(b =>printBatteryStatus(b));
     window.ononline = e =>online.innerText='connected -- '+e.type
     window.onoffline = e =>online.innerText='disconnected -- '+e.type
-    window.onkeydown = e=>board.innerText=e.key
-    window.onkeyup = e=>board.innerText=''
+    window.onkeydown = e=>board.innerText+=e.key
+    window.onkeyup = e=>board.innerText='key: '
     window.bt.onmouseenter = e=> 
         document.querySelector('h2').style.backgroundColor = 'green'
     window.bt.onmouseleave = e=> 

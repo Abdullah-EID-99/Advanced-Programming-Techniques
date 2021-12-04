@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>JS Animation</title>
+
+  <style>
+    body { max-width: 500px; }
+    #sample { overflow-x: auto; }
+    button {
+      user-select: none;
+      cursor: pointer;
+    }
+    #box {
+      font-size: 180px;
+      background: rgb(231, 226, 226);
+      width: 300px;
+      height: 240px;
+      position: relative;
+    }
+    #aaa, #dot {
+      user-select: none;
+      position: absolute;
+      left: 130px;
+    }
+    #aaa {
+      color: blue;
+    }
+    #dot {
+      background: rgba(0, 0, 0, 0);
+      color: red;
+      top: -105px;
+    }
+    #rectangular {
+      margin: 50px;
+      width: 200px;
+      height: 100px;
+      background-color: yellow;
+      border: 1px solid black;
+      transform: scale(1.5,1.5);
+    }
+    
+  </style>
+</head>
+
+<body>
+
+<h2 id=title></h2>
+<div id="rectangular" onClick="rectangular.animate(t4, 7000)">
+  Click over this rectangular to animate it.
+</div>
+<hr />
+<div id=box onClick="this.animate(t5, 1000)">
+  *
+  <span id=aaa>A</span>
+  <span id=dot>.</span>
+</div>
+
+<p id=code><button onClick="this.animate(t1, 5000)">move</button>
+<button onClick="dot.animate(t2, 8000)">rotate and translate dot</button>
+<button onClick="aaa.animate(t3, 4000)">rotate A</button>
+</p>
+
+<hr />
+<b>Sample code</b>
+<pre id=sample></pre>
+
+<hr />
+<p>Ref: <a href="https://webkit.org/blog/8343/web-animations-in-webkit/" 
+   target="NewTab">Web Animations in WebKit</a>
+</p>
+
+<script>
+"use strict";
+title.innerText = document.title;
+let
+  r0 = "rotate(0)", x0 = "translateX(0)", s0="scale(1.5,1.5)",
+  t1 = { transform: [x0, "translateX(420px)","translate(420px,-500px)",
+                    "translate(0,-500px)", x0]},
+  t2 = { transform: 
+        [r0, "rotate(720deg)", r0,"translateY(100px)","translate(45px,0)",
+       "translate(75px,100px)","translate(65px,70px)","translate(0,70px)",x0],
+        color: ["yellow", "cyan", "green", "yellow"] },
+  t3 = { transform: [r0, "rotate(360deg)", r0,"rotate(-360deg)", r0],
+         textShadow: ["0 0 black", "8px 8px red","18px 18px green",
+                      "8px 8px red", "0 0 black"]},
+  t4 = { transform: [s0,"scale(0.0,0.0)",s0, "scale(0.0,0.0)",s0],
+         background: ["yellow", "red", "green", "yellow"]},
+  t5 = { textAlign: ["left","center","right","center","left"]};
+
+sample.innerText = code.innerHTML
+  +'\nt2 = '+JSON.stringify(t1)
+  +'\nt2 = '+JSON.stringify(t2)
+  +'\nt3 = '+JSON.stringify(t3)
+  +'\nt4 = '+JSON.stringify(t4)
+  +'\nt5 = '+JSON.stringify(t5)
+</script>
+
+</body>
+</html>
