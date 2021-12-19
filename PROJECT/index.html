@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="tr-TR">
 <head>
-	<link rel="icon" href="avatar.png">
+	<link id =icon rel="icon" href="avatar.png">
 	<link rel="manifest" href="manifest.json">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>Kur çevirici uygulama</title>
@@ -23,7 +23,7 @@
 		svg {
 			background: white;
 			font: 10px arial, sans-serif;
-			width: 80%;
+			width: 75%;
 		}
 		rect {
 		fill: rgb(174, 221, 223);
@@ -57,25 +57,31 @@
 			width: 100px;
 			margin: 4px;
 			font-size: 20px;
-			width: 29%;
+			width: 27%;
 		}
 		label{
 			font-size: 24px;
 			font: bold;
 		}
 		input{
-			width: 43%;
+			width: 38%;
 			font-size: 20px;
 		}
 		#myDiv{
 			height: 420px;
 			width: 400px;
 		}
+		image{
+			width: 200px;
+			height: 200px;
+		}
+		pre{
+			margin: 0;
+		}
 	</style>
 </head>
 
 <body>
-	
 	<h2>Convert from and to any rate you wont</h2>
 	<dev id="rate">
 		<label for="cars">from </label>
@@ -93,15 +99,18 @@
 	</dev><br><br>
 	
 	<button onclick="k.Count()">Convert</button><br><br>
-	<svg id="svg" width="450" height="190">
-		<rect x="10" y="10" width="430" height="170"></rect>
-		<foreignobject x="10" y="10" width="450" height="150">
+	<svg id="svg" width="440" height="210">
+		<rect x="10" y="10" width="420" height="190"></rect>
+		<foreignobject x="10" y="10" width="420" height="170">
 			<text x="200" y="55" fill="blue">
+				<P>from <img id="base_flag"> to <img id="target_flag"></P>
 				<pre id="detail"></pre>
+				
 			</text>
 		</foreignobject>
 	</svg><br><br>
 	<a href="graph.html"><button >Show graph</button></a><br>
+	
 <script>
 	class kur{
 		constructor(key){
@@ -134,7 +143,7 @@
 		}
 		async getJson(datex = 'latest',base = 'TRY'){
 			let urlx= `https://v6.exchangerate-api.com/v6/${this.key}/latest/${base}`
-			let xxx = `http://api.exchangeratesapi.io/v1/${datex}?access_key=${this.key}`
+			//let xxx = `http://api.exchangeratesapi.io/v1/${datex}?access_key=${this.key}`
 			let info = await fetch(urlx)
 			if(!info.ok) console.log("bir hat oluştu")
 			this.jsonInfo = await info.json()
@@ -166,42 +175,36 @@
 				k = k.innerText
 			let h =  hedef.item(hedef.selectedIndex)
 				h = h.innerText
-				////******
-			let urlx= `https://v6.exchangerate-api.com/v6/${this.key}/latest/${k}`
+
+			//let urlx= `https://v6.exchangerate-api.com/v6/${this.key}/latest/${k}`
+			let urlx= `https://v6.exchangerate-api.com/v6/${this.key}/enriched/${k}/${h}`
 			let info = await fetch(urlx)
 			if(!info.ok) console.log("bir hat oluştu")
 			this.jsonInfo = await info.json()
-			////******
-			let jsn = this.jsonInfo.conversion_rates
+
+			let jsn = this.jsonInfo
 			let detaylar = document.getElementById("detail");
 			let deger =  document.getElementById("miktar")
 			let s = (result,r1,r2) => 
 				detaylar.innerText =` ${parseInt(deger.value)} ${k} = ${result.toFixed(4)}`
 				+`${h}\n${r1}\n${r2}\n last update: ${lastUpdate}\n next update: ${nexUpdate}`
-			/*if(k == 'EURO' && h == 'EURO'){
-				result=parseInt(deger.value)
-				r1 = ' '+'1 '+k+' = 1 '+h 
-				r2 = ' '+'1 '+h+' = 1 '+k 
-			}else if(k == 'EURO'){
-				result=jsn[h]*parseInt(deger.value)
-				r1 = ' '+'1 '+k+' = '+jsn[h].toFixed(4)+' '+h
-				r2 = ' '+'1 '+h+' = '+(1/jsn[h]).toFixed(4)+' '+k  
-			}else if(h == 'EURO'){
-				result=(1.0/jsn[k])*parseInt(deger.value)
-				r1 = ' '+'1 '+k+' = '+(1.0/jsn[k]).toFixed(4)+' '+h 
-				r2 = ' '+'1 '+h+' = '+jsn[k].toFixed(4)+' '+k 
-				
-			}else{
-				result=(1.0/jsn[k])*jsn[h]*parseInt(deger.value)
-				r1 = ' '+'1 '+k+' = '+((1.0/jsn[k])*jsn[h]).toFixed(4)+' '+h 
-				r2 = ' '+'1 '+h+' = '+((1.0/jsn[h])*jsn[k]).toFixed(4)+' '+k 
-			}*/
-			result=jsn[h]*parseInt(deger.value)
-			r1 = ' '+'1 '+k+' = '+jsn[h].toFixed(4)+' '+h
-			r2 = ' '+'1 '+h+' = '+(1/jsn[h]).toFixed(4)+' '+k
+			
+			result=jsn['conversion_rate']*parseInt(deger.value)
+			r1 = ' '+'1 '+k+' = '+jsn['conversion_rate'].toFixed(4)+' '+h
+			r2 = ' '+'1 '+h+' = '+(1/jsn['conversion_rate']).toFixed(4)+' '+k
 			console.log('hedef = '+h)
 			console.log('kaynak = '+k)
 			s(result,r1,r2)
+			target_flag.src = jsn['target_data']['flag_url']
+			document.querySelector('#icon').href= target_flag.src
+			/*
+			let urlx2= `https://v6.exchangerate-api.com/v6/${this.key}/enriched/TRY/${k}`
+			let info2 = await fetch(urlx2)
+			if(!info2.ok) console.log("bir hat oluştu")
+			let jsn2 = await info2.json()
+			base_flag.src = jsn2['target_data']['flag_url']*/
+			base_flag.src = `https://api.exchangerate-api.com/flag-images/${k.charAt(0)}${k.charAt(1)}.gif`
+
 			localStorage.setItem('h',h)
 			localStorage.setItem('k',k)
 			localStorage.setItem('key',this.key)

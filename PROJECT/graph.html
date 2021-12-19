@@ -1,17 +1,35 @@
 <head>
 	<script src='https://cdn.plot.ly/plotly-2.6.3.min.js'></script>
-	<meta name="viewport" content="width=device-width, initial-scale=0.9">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style >
 	</style>
 </head>
 
 <body>
+	<p id="dt1">.</p>
+	<p id="dt2">.</p>
 	<div id='myDiv'></div>
 	<script >
 		let key = localStorage.getItem('key')
 		async function showGraph() {
 			let d1, m1
+			let k_code, h_code
 			let k = localStorage.getItem('k'), h = localStorage.getItem('h')
+			let url_codes= `https://v6.exchangerate-api.com/v6/${key}/codes`
+			let info_codes = await fetch(url_codes)
+			if(!info_codes.ok) console.log("bir hat oluştu")
+			let codes = await info_codes.json()
+			codes = codes.supported_codes
+			for(let x of codes){
+				if(x[0] == k){
+					k_code = x[1]
+				}
+				if(x[0] == h){
+					h_code = x[1]
+				}
+			}
+			dt1.innerText  = `From ${k_code} To ${h_code}`
+			dt2.innerText  = `The graph below show the value of 1 ${k_code} accordin to the ${h_code}`
 			const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 			const d = new Date();
 			let day = d.getDate();
@@ -32,8 +50,8 @@
 				let urlx= `https://v6.exchangerate-api.com/v6/${key}/history/${k}/${d.getFullYear()}/${m1}/${d1}`
 				let info = await fetch(urlx)
 				if(!info.ok) console.log("bir hat oluştu")
-				this.jsonInfo = await info.json()
-				let jsn = this.jsonInfo.conversion_rates
+				let jsn = await info.json()
+				jsn = jsn.conversion_rates
 				xArray.push(d1+' '+month)
 				let result = ((1.0/jsn[k])*jsn[h]).toFixed(4)
 				yArray.push(result)
