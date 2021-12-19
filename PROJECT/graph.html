@@ -1,0 +1,55 @@
+<head>
+	<script src='https://cdn.plot.ly/plotly-2.6.3.min.js'></script>
+	<style >
+	</style>
+</head>
+
+<body>
+	<div id='myDiv'></div>
+	<script >
+		let key = localStorage.getItem('key')
+		async function showGraph() {
+			let d1, m1
+			let k = localStorage.getItem('k'), h = localStorage.getItem('h')
+			const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+			const d = new Date();
+			let day = d.getDate();
+			let month = months[d.getMonth()];
+			var xArray = [];
+			var yArray = [];
+			let datex = (y,m,d) => `${String(y)}-${String(m).padStart(2,0)}-${String(d).padStart(2,0)}` 
+			for(let i = day-6; i <= day; i++){
+				if(i<=0){
+					d1 = 30 -i
+					m1 = d.getMonth()
+				}else{
+					d1 = i
+					m1 = d.getMonth()+1
+				}
+				let dd = datex(d.getFullYear(),m1,d1)
+				month = months[m1-1];
+				let urlx= `https://v6.exchangerate-api.com/v6/${key}/history/${k}/${d.getFullYear()}/${m1}/${d1}`
+				let info = await fetch(urlx)
+				if(!info.ok) console.log("bir hat oluştu")
+				this.jsonInfo = await info.json()
+				let jsn = this.jsonInfo.conversion_rates
+				xArray.push(d1+' '+month)
+				let result = ((1.0/jsn[k])*jsn[h]).toFixed(4)
+				yArray.push(result)
+				console.log(xArray[xArray.length-1]+'->'+yArray[yArray.length-1])
+				
+			}
+			
+			var data = [
+			{ 
+				x: xArray,
+				y: yArray,
+				type: 'scatter'
+			} 
+			];
+
+			Plotly.newPlot('myDiv', data);
+		}
+		showGraph()
+	</script>
+</body>

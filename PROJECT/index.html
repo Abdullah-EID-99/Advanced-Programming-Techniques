@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="tr-TR">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Extra Eğitim</title>
+<style>
+	body{
+		width: 440px;
+	}
+	.rate{
+		display: inline-block;
+		vertical-align: top;
+		font-size: 20px;
+		
+	}
+	.rate { width: 42%; }
+	
+	svg {
+        background: white;
+        font: 10px arial, sans-serif;
+		width: 80%;
+    }
+    rect {
+      fill: rgb(174, 221, 223);
+      stroke: rgb(47, 150, 7);
+      stroke-width: 5;
+	  width: 96%;
+    }
+    line {
+        stroke: rgb(9, 15, 112);
+        stroke-width:2;
+      }
+	  text{
+		  font-size: 16px;
+		  text-align: left;
+		  margin-left: 10%;
+	  }
+	  button {
+		background-color: #4CAF50;
+		border: none;
+		color: white;
+		padding: 10px 20px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 14px;
+		margin: 4px 2px;
+		cursor: pointer;
+		width: 80%;
+	  }
+	  select {
+		width: 100px;
+		margin: 4px;
+		font-size: 20px;
+		width: 29%;
+	  }
+	  label{
+		font-size: 24px;
+		font: bold;
+	  }
+	  input{
+		width: 43%;
+		font-size: 20px;
+	  }
+	  #myDiv{
+		height: 420px;
+		width: 400px;
+	 }
+</style>
+</head>
+
+<body>
+	
+	<h2>Convert from and to any rate you wont</h2>
+	<dev id="rate">
+		<label for="cars">from </label>
+		<select name="r1" id="r1">
+		</select>
+	</dev>
+	<dev id="rate">
+		<label for="cars"> to </label>
+		<select name="r2" id="r2">
+		</select>
+	</dev><br><br>
+	<dev>
+		Enter the amoung here:
+		<input type="text" id="miktar" name="miktar" value="1" >
+	</dev><br><br>
+	
+	<button onclick="k.Count()">Convert</button><br><br>
+	<svg id="svg" width="450" height="150">
+		<rect x="10" y="10" width="430" height="130"></rect>
+		<foreignobject x="10" y="10" width="450" height="150">
+			<text x="200" y="55" fill="blue">
+				<pre id="detail"></pre>
+			</text>
+		</foreignobject>
+	</svg><br><br>
+	<a href="graph.html"><button >Show graph</button></a><br>
+<script>
+	class kur{
+		constructor(key){
+			this.key = key
+			this.jsonInfo = {}
+			this.start = true
+			this.getJson()
+		}
+		init(){
+			let s=JSON.stringify(this.jsonInfo.conversion_rates)
+			let k1=s.replace("}","")
+				k1 = k1.replace("{","")
+			let a =k1.split(",")
+			for(let i=0;i<a.length;i++){
+				a[i]=a[i].split(':')
+			}
+			for(let x of a){
+				let new_x=x[0].replaceAll('"','');
+				var op1 = document.createElement("option"); 
+				var op2 = document.createElement("option"); 
+				op1.innerHTML = new_x
+				op1.value=new_x
+				op2.innerHTML = new_x
+				op2.value=new_x
+				let r1 = document.getElementById("r1")
+				r1.appendChild(op1);
+				let r2 = document.getElementById("r2")
+				r2.appendChild(op2);
+			}
+		}
+		async getJson(datex = 'latest',base = 'TRY'){
+			let urlx= `https://v6.exchangerate-api.com/v6/${this.key}/latest/${base}`
+			let xxx = `http://api.exchangeratesapi.io/v1/${datex}?access_key=${this.key}`
+			let info = await fetch(urlx)
+			if(!info.ok) console.log("bir hat oluştu")
+			this.jsonInfo = await info.json()
+			if(this.start){
+				this.init()
+				this.Count()
+				this.start = false
+			}
+		}
+		async Count(){
+			let r1,r2,result
+			let date1 = new Date(this.jsonInfo.timestamp*1000)
+			let kaynak = document.getElementById("r1");
+			let hedef  = document.getElementById("r2");
+			let k = kaynak.item(kaynak.selectedIndex)
+				k = k.innerText
+			let h =  hedef.item(hedef.selectedIndex)
+				h = h.innerText
+				////******
+			let urlx= `https://v6.exchangerate-api.com/v6/${this.key}/latest/${k}`
+			let info = await fetch(urlx)
+			if(!info.ok) console.log("bir hat oluştu")
+			this.jsonInfo = await info.json()
+			////******
+			let jsn = this.jsonInfo.conversion_rates
+			let detaylar = document.getElementById("detail");
+			let deger =  document.getElementById("miktar")
+			let s = (result,r1,r2) => detaylar.innerText =' '+parseInt(deger.value)+' '+k+' = '+result.toFixed(4) +' '
+			+h+'\n' +r1+'\n' +r2+'\n last update: '+`${date1.getFullYear()}/${date1.getMonth()}/${date1.getDay()} ${date1.getHours()}:${date1.getMinutes()}:${date1.getSeconds()}`
+			/*if(k == 'EURO' && h == 'EURO'){
+				result=parseInt(deger.value)
+				r1 = ' '+'1 '+k+' = 1 '+h 
+				r2 = ' '+'1 '+h+' = 1 '+k 
+			}else if(k == 'EURO'){
+				result=jsn[h]*parseInt(deger.value)
+				r1 = ' '+'1 '+k+' = '+jsn[h].toFixed(4)+' '+h
+				r2 = ' '+'1 '+h+' = '+(1/jsn[h]).toFixed(4)+' '+k  
+			}else if(h == 'EURO'){
+				result=(1.0/jsn[k])*parseInt(deger.value)
+				r1 = ' '+'1 '+k+' = '+(1.0/jsn[k]).toFixed(4)+' '+h 
+				r2 = ' '+'1 '+h+' = '+jsn[k].toFixed(4)+' '+k 
+				
+			}else{
+				result=(1.0/jsn[k])*jsn[h]*parseInt(deger.value)
+				r1 = ' '+'1 '+k+' = '+((1.0/jsn[k])*jsn[h]).toFixed(4)+' '+h 
+				r2 = ' '+'1 '+h+' = '+((1.0/jsn[h])*jsn[k]).toFixed(4)+' '+k 
+			}*/
+			result=jsn[h]*parseInt(deger.value)
+			r1 = ' '+'1 '+k+' = '+jsn[h].toFixed(4)+' '+h
+			r2 = ' '+'1 '+h+' = '+(1/jsn[h]).toFixed(4)+' '+k
+			console.log('hedef = '+h)
+			console.log('kaynak = '+k)
+			s(result,r1,r2)
+			localStorage.setItem('h',h)
+			localStorage.setItem('k',k)
+			localStorage.setItem('key',this.key)
+		}
+
+}
+
+	let key = "91f1b66a8a141281e0f0086f"
+	let k = new kur(key)
+	
+
+/*
+	let all_info,rates,updatingDate
+	// "8176dff5be55d8088fe3ef0eae3049b8"
+	//http://api.exchangeratesapi.io/v1/2014-12-12?access_key=cf90e49ea7744ba43e3adb6abcbf8476&symbols=USD,CAD,JPY
+	//http://api.exchangeratesapi.io/v1/2014-12-12?access_key=cf90e49ea7744ba43e3adb6abcbf8476
+	async function getJsonInfo(datex = 'latest'){
+		let urlx = `http://api.exchangeratesapi.io/v1/${datex}?access_key=${key}`
+		let info = await fetch(urlx)
+		if(!info.ok) console.log("bir hat oluştu")
+		let jsonObject=await info.json()
+		all_info = jsonObject
+		rates = jsonObject.rates
+		updatingDate = jsonObject.timestamp
+		init(all_info)
+	}
+	//getJsonInfo()
+	//hesapla(rates,updatingDate)
+	//getJsonInfo('2015-10-12')
+	function ss(jsonObject){
+		let s=JSON.stringify(jsonObject.rates)
+		let k=s.replace("}","")
+		    k = k.replace("{","")
+		let a =k.split(",")
+		for(let i=0;i<a.length;i++){
+			a[i]=a[i].split(':')
+		}
+		for(let x of a){
+			let new_x=x[0].replaceAll('"','');
+  			var op1 = document.createElement("option");  // Create with DOM
+			var op2 = document.createElement("option"); 
+			op1.innerHTML = new_x
+			op1.value=new_x
+			op2.innerHTML = new_x
+			op2.value=new_x
+			let r1 = document.getElementById("r1")
+			r1.appendChild(op1);
+			let r2 = document.getElementById("r2")
+			r2.appendChild(op2); 
+		}
+	} 
+	function hesapla(jsonObject,time1){
+		let r1,r2,result
+		let date1 = new Date(time1*1000)
+		let kaynak = document.getElementById("r1");
+		let hedef  = document.getElementById("r2");
+		let k = kaynak.item(kaynak.selectedIndex)
+			k = k.innerText
+		let h =  hedef.item(hedef.selectedIndex)
+			h = h.innerText
+		let detaylar = document.getElementById("detail");
+		let deger =  document.getElementById("miktar")
+		let s = (result,r1,r2) => detaylar.innerText =' '+parseInt(deger.value)+' '+k+' = '+result.toFixed(4) +' '
+		+h+'\n' +r1+'\n' +r2+'\n last update: '+`${date1.getFullYear()}/${date1.getMonth()}/${date1.getDay()} ${date1.getHours()}:${date1.getMinutes()}:${date1.getSeconds()}`
+		if(k == 'EURO' && h == 'EURO'){
+			result=parseInt(deger.value)
+			r1 = ' '+'1 '+k+' = 1 '+h 
+			r2 = ' '+'1 '+h+' = 1 '+k 
+			//detaylar.innerText = ' '+'result = '+result +'\n' +r
+		}else if(k == 'EURO'){
+			result=jsonObject[h]*parseInt(deger.value)
+			r1 = ' '+'1 '+k+' = '+jsonObject[h].toFixed(4)+' '+h
+			r2 = ' '+'1 '+h+' = '+(1/jsonObject[h]).toFixed(4)+' '+h  
+		}else if(h == 'EURO'){
+			result=(1.0/jsonObject[k])*parseInt(deger.value)
+			r1 = ' '+'1 '+k+' = '+(1.0/jsonObject[k]).toFixed(4)+' '+h 
+			r2 = ' '+'1 '+h+' = '+jsonObject[k].toFixed(4)+' '+k 
+			
+		}else{
+			result=(1.0/jsonObject[k])*jsonObject[h]*parseInt(deger.value)
+			r1 = ' '+'1 '+k+' = '+((1.0/jsonObject[k])*jsonObject[h]).toFixed(4)+' '+h 
+			r2 = ' '+'1 '+h+' = '+((1.0/jsonObject[h])*jsonObject[k]).toFixed(4)+' '+k 
+		}
+		s(result,r1,r2)
+	}
+	function hesapla2(){
+		hesapla(rates,updatingDate)
+	}
+	/*
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	const d = new Date();
+	let month = months[d.getMonth()];
+	var xArray = [1,2,3,4,5,6,7];
+	var yArray = [13.55,13,14,15,16,17,20];
+
+// Define Data
+var data = [{
+  x: xArray,
+  y: yArray,
+  mode:"lines"
+}];
+
+// Define Layout
+var layout = {
+  xaxis: {range: [1, 7], title: "Square Meters"},
+  yaxis: {range: [1, 20], title: "Price in Millions"},  
+  title: "House Prices vs. Size"
+};
+
+// Display using Plotly
+Plotly.newPlot("myPlot", data, layout);
+	*/
+</script>
+
+</body>
+
+</html>
