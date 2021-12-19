@@ -29,7 +29,7 @@
 		fill: rgb(174, 221, 223);
 		stroke: rgb(47, 150, 7);
 		stroke-width: 5;
-		width: 96%;
+		width: 97%;
 		}
 		line {
 			stroke: rgb(9, 15, 112);
@@ -51,7 +51,7 @@
 			font-size: 14px;
 			margin: 4px 2px;
 			cursor: pointer;
-			width: 75%;
+			width: 78%;
 		}
 		select {
 			width: 100px;
@@ -64,7 +64,7 @@
 			font: bold;
 		}
 		input{
-			width: 38%;
+			width: 36%;
 			font-size: 20px;
 		}
 		#myDiv{
@@ -100,8 +100,8 @@
 	
 	<button onclick="k.Count()">Convert</button><br><br>
 	<svg id="svg" width="440" height="210">
-		<rect x="10" y="10" width="420" height="190"></rect>
-		<foreignobject x="10" y="10" width="420" height="170">
+		<rect x="10" y="10" width="430" height="190"></rect>
+		<foreignobject x="10" y="10" width="425" height="170">
 			<text x="200" y="55" fill="blue">
 				<P>from <img id="base_flag"> to <img id="target_flag"></P>
 				<pre id="detail"></pre>
@@ -131,6 +131,10 @@
 				let new_x=x[0].replaceAll('"','');
 				var op1 = document.createElement("option"); 
 				var op2 = document.createElement("option"); 
+				/*var flag1 = document.createElement("img"); 
+				var flag2 = document.createElement("img"); 
+				flag1.src =`https://www.exchangerate-api.com/img/docs/${new_x.charAt(0)}${new_x.charAt(1)}.gif` 
+				flag2.src =flag1.src*/
 				op1.innerHTML = new_x
 				op1.value=new_x
 				op2.innerHTML = new_x
