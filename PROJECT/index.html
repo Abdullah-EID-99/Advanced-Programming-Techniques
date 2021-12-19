@@ -1,74 +1,77 @@
 <!doctype html>
 <html lang="tr-TR">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<title>Extra Eğitim</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-	body{
-		width: 440px;
-		height: 440px;
-	}
-	.rate{
-		display: inline-block;
-		vertical-align: top;
-		font-size: 20px;
+	<link rel="icon" href="avatar.png">
+	<link rel="manifest" href="manifest.json">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Kur çevirici uygulama</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<style>
+		body{
+			width: 440px;
+			height: 440px;
+		}
+		.rate{
+			display: inline-block;
+			vertical-align: top;
+			font-size: 20px;
+			
+		}
+		.rate { width: 42%; }
 		
-	}
-	.rate { width: 42%; }
-	
-	svg {
-        background: white;
-        font: 10px arial, sans-serif;
-		width: 80%;
-    }
-    rect {
-      fill: rgb(174, 221, 223);
-      stroke: rgb(47, 150, 7);
-      stroke-width: 5;
-	  width: 96%;
-    }
-    line {
-        stroke: rgb(9, 15, 112);
-        stroke-width:2;
-      }
-	  text{
-		  font-size: 16px;
-		  text-align: left;
-		  margin-left: 10%;
-	  }
-	  button {
-		background-color: #4CAF50;
-		border: none;
-		color: white;
-		padding: 10px 20px;
-		text-align: center;
-		text-decoration: none;
-		display: inline-block;
-		font-size: 14px;
-		margin: 4px 2px;
-		cursor: pointer;
-		width: 75%;
-	  }
-	  select {
-		width: 100px;
-		margin: 4px;
-		font-size: 20px;
-		width: 29%;
-	  }
-	  label{
-		font-size: 24px;
-		font: bold;
-	  }
-	  input{
-		width: 43%;
-		font-size: 20px;
-	  }
-	  #myDiv{
-		height: 420px;
-		width: 400px;
-	 }
-</style>
+		svg {
+			background: white;
+			font: 10px arial, sans-serif;
+			width: 80%;
+		}
+		rect {
+		fill: rgb(174, 221, 223);
+		stroke: rgb(47, 150, 7);
+		stroke-width: 5;
+		width: 96%;
+		}
+		line {
+			stroke: rgb(9, 15, 112);
+			stroke-width:2;
+		}
+		text{
+			font-size: 16px;
+			text-align: left;
+			margin-left: 10%;
+		}
+		button {
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 14px;
+			margin: 4px 2px;
+			cursor: pointer;
+			width: 75%;
+		}
+		select {
+			width: 100px;
+			margin: 4px;
+			font-size: 20px;
+			width: 29%;
+		}
+		label{
+			font-size: 24px;
+			font: bold;
+		}
+		input{
+			width: 43%;
+			font-size: 20px;
+		}
+		#myDiv{
+			height: 420px;
+			width: 400px;
+		}
+	</style>
 </head>
 
 <body>
@@ -90,8 +93,8 @@
 	</dev><br><br>
 	
 	<button onclick="k.Count()">Convert</button><br><br>
-	<svg id="svg" width="450" height="150">
-		<rect x="10" y="10" width="430" height="130"></rect>
+	<svg id="svg" width="450" height="190">
+		<rect x="10" y="10" width="430" height="170"></rect>
 		<foreignobject x="10" y="10" width="450" height="150">
 			<text x="200" y="55" fill="blue">
 				<pre id="detail"></pre>
@@ -141,9 +144,22 @@
 				this.start = false
 			}
 		}
+		timeFormat(unix_time){
+			let t = new Date(unix_time*1000)
+			let 
+			y = t.getFullYear(),
+			m = String(t.getMonth()+1).padStart(2,0),
+			d = String(t.getDate()).padStart(2,0),
+			h = String(t.getHours()).padStart(2,0),
+			i = String(t.getMinutes()).padStart(2,0),
+			s = String(t.getSeconds()).padStart(2,0)
+			return `${y}/${m}/${d} ${h}:${i}:${s}`
+			
+		}
 		async Count(){
 			let r1,r2,result
-			let date1 = new Date(this.jsonInfo.timestamp*1000)
+			let lastUpdate = this.timeFormat(this.jsonInfo.time_last_update_unix)
+			let nexUpdate  = this.timeFormat(this.jsonInfo.time_next_update_unix)
 			let kaynak = document.getElementById("r1");
 			let hedef  = document.getElementById("r2");
 			let k = kaynak.item(kaynak.selectedIndex)
@@ -159,8 +175,9 @@
 			let jsn = this.jsonInfo.conversion_rates
 			let detaylar = document.getElementById("detail");
 			let deger =  document.getElementById("miktar")
-			let s = (result,r1,r2) => detaylar.innerText =' '+parseInt(deger.value)+' '+k+' = '+result.toFixed(4) +' '
-			+h+'\n' +r1+'\n' +r2+'\n last update: '+`${date1.getFullYear()}/${date1.getMonth()}/${date1.getDay()} ${date1.getHours()}:${date1.getMinutes()}:${date1.getSeconds()}`
+			let s = (result,r1,r2) => 
+				detaylar.innerText =` ${parseInt(deger.value)} ${k} = ${result.toFixed(4)}`
+				+`${h}\n${r1}\n${r2}\n last update: ${lastUpdate}\n next update: ${nexUpdate}`
 			/*if(k == 'EURO' && h == 'EURO'){
 				result=parseInt(deger.value)
 				r1 = ' '+'1 '+k+' = 1 '+h 
