@@ -108,16 +108,32 @@ class Graph extends Menu {
     }
     this.context.putImageData(id, 0, 0);
   }
-  flipHorizontal() {
+  invertImage() {
     let id = this.context.getImageData(0, 0, this.W, this.H);
     let data = id.data;
-    for (let i = 0; i < this.H; i += 4) {
-      for (let j = 0; j < this.W; j += 4) {
-      var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-      data[i]   = avg; // red
-      data[i+1] = avg; // green
-      data[i+2] = avg; // blue
-      }
+    let temp  = []
+    for (let i = 0; i < data.length; i++) {
+      temp.push(data[i])
+    }
+    let x = temp.length -1
+    for (let i = 0; i < data.length; i +=4) {
+      data[i] = temp[x-3]
+      data[i+1] = temp[x-2]
+      data[i+2] = temp[x-1]
+      data[i+3] = temp[x]
+      x -=4;
+    }
+    this.context.putImageData(id, 0, 0);
+  }
+  alfa(a=150) {
+    if(a<0 || a>255){
+      alert("you can enter number between 0 and 255 only!")  
+      return
+    }
+    let id = this.context.getImageData(0, 0, this.W, this.H);
+    let data = id.data;
+    for (let i = 3; i < data.length; i += 4) {
+      data[i]=a
     }
     this.context.putImageData(id, 0, 0);
   }
@@ -129,7 +145,7 @@ class Graph extends Menu {
 function init() {
     MENU = new Graph(); //global
     display(MENU); display(cx); display(img);
-    MENU.loadImage("imgx.png")
+    MENU.loadImage("https://blm305.github.io/2021/images/36419031.jpg")
 }
     canvas.addEventListener('mousemove', pick);
     try {
