@@ -89,6 +89,7 @@ class Graph extends Menu {
   invert() {
     let id = this.context.getImageData(0, 0, this.W, this.H);
     let data = id.data;
+    console.log(data)
     for (let i = 0; i < data.length; i += 4) {
       data[i]   = 255 - data[i];   // red
       data[i+1] = 255 - data[i+1]; // green
