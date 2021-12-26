@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="tr-TR">
+<head>
+	<link id =icon rel="icon" href="avatar.png">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Kur çevirici uygulama</title>
+
+	<style>
+		body{
+			width: 440px;
+			height: 440px;
+		}
+		.rate{
+			display: inline-block;
+			vertical-align: top;
+			font-size: 20px;
+			
+		}
+		.rate { width: 42%; }
+		
+		svg {
+			background: white;
+			font: 10px arial, sans-serif;
+			width: 75%;
+		}
+		rect {
+		fill: rgb(174, 221, 223);
+		stroke: rgb(47, 150, 7);
+		stroke-width: 5;
+		width: 97%;
+		}
+		line {
+			stroke: rgb(9, 15, 112);
+			stroke-width:2;
+		}
+		text{
+			font-size: 16px;
+			text-align: left;
+			margin-left: 10%;
+		}
+		button {
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 14px;
+			margin: 4px 2px;
+			cursor: pointer;
+			width: 78%;
+		}
+		select {
+			width: 100px;
+			margin: 4px;
+			font-size: 20px;
+			width: 27%;
+		}
+		label{
+			font-size: 24px;
+			font: bold;
+		}
+		input{
+			width: 36%;
+			font-size: 20px;
+		}
+		pre{
+			margin: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<h2>Convert from and to any rate you wont</h2>
+	<dev id="rate">
+		<label for="cars">from </label>
+		<select name="r1" id="r1">
+			<option>TRY</option>
+		</select>
+	</dev>
+	<dev id="rate">
+		<label for="cars"> to </label>
+		<select name="r2" id="r2">
+			<option>USD</option>
+		</select>
+	</dev><br><br>
+	<dev>
+		Enter the amoung here:
+		<input type="text" id="miktar" name="miktar" value="1" >
+	</dev><br><br>
+	
+	<button >Convert</button><br><br>
+	<svg id="svg" width="440" height="210">
+		<rect x="10" y="10" width="430" height="190"></rect>
+		<foreignobject x="10" y="10" width="425" height="170">
+			<text x="200" y="55" fill="blue">
+				<pre id="detail"></pre>
+				
+			</text>
+		</foreignobject>
+	</svg><br><br>
+	
+
+</body>
+
+</html>

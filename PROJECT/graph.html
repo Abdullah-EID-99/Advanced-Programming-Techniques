@@ -39,7 +39,7 @@
 			let datex = (y,m,d) => `${String(y)}-${String(m).padStart(2,0)}-${String(d).padStart(2,0)}` 
 			for(let i = day-6; i <= day; i++){
 				if(i<=0){
-					d1 = 30 -i
+					d1 = 30 + i
 					m1 = d.getMonth()
 				}else{
 					d1 = i
