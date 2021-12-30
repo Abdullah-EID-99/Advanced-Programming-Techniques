@@ -6,7 +6,6 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>Kur çevirici uygulama</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 	<style>
 		body{
 			width: 440px;
@@ -51,7 +50,7 @@
 			font-size: 14px;
 			margin: 4px 2px;
 			cursor: pointer;
-			width: 78%;
+			width: 74%;
 		}
 		select {
 			width: 100px;
@@ -78,6 +77,44 @@
 		pre{
 			margin: 0;
 		}
+
+		.tooltip {
+			position: relative;
+			display: inline-block;
+		  }
+		  
+		  .tooltip .tooltiptext {
+			visibility: hidden;
+			width: 120px;
+			background-color: #555;
+			color: #fff;
+			text-align: center;
+			border-radius: 6px;
+			padding: 5px 0;
+			position: absolute;
+			z-index: 1;
+			bottom: 125%;
+			left: 50%;
+			margin-left: -60px;
+			opacity: 0;
+			transition: opacity 0.3s;
+		  }
+		  
+		  .tooltip .tooltiptext::after {
+			content: "";
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			margin-left: -5px;
+			border-width: 5px;
+			border-style: solid;
+			border-color: #555 transparent transparent transparent;
+		  }
+		  
+		  .tooltip:hover .tooltiptext {
+			visibility: visible;
+			opacity: 1;
+		  }
 	</style>
 </head>
 
@@ -85,20 +122,19 @@
 	<h2>Convert from and to any rate you wont</h2>
 	<dev id="rate">
 		<label for="cars">from </label>
-		<select name="r1" id="r1">
+		<select name="r1" id="r1" onchange="k.Count()">
 		</select>
 	</dev>
 	<dev id="rate">
 		<label for="cars"> to </label>
-		<select name="r2" id="r2">
+		<select name="r2" id="r2" onchange="k.Count()">
 		</select>
 	</dev><br><br>
-	<dev>
+	<dev class="tooltip">
 		Enter the amoung here:
-		<input type="text" id="miktar" name="miktar" value="1" >
+		<input type="text" id="miktar" name="miktar" value="1" onchange="k.Count()" >
+		<span class="tooltiptext">press enter to show the result</span>
 	</dev><br><br>
-	
-	<button onclick="k.Count()">Convert</button><br><br>
 	<svg id="svg" width="440" height="210">
 		<rect x="10" y="10" width="430" height="190"></rect>
 		<foreignobject x="10" y="10" width="425" height="170">
@@ -110,7 +146,7 @@
 		</foreignobject>
 	</svg><br><br>
 	<a href="graph.html"><button >Show graph</button></a><br>
-	
+
 <script>
 	class kur{
 		constructor(key){
@@ -127,22 +163,25 @@
 			for(let i=0;i<a.length;i++){
 				a[i]=a[i].split(':')
 			}
+			let most_important_rates=new Array("TRY", "USD", "EUR", "GBP");
 			for(let x of a){
 				let new_x=x[0].replaceAll('"','');
-				var op1 = document.createElement("option"); 
-				var op2 = document.createElement("option"); 
-				/*var flag1 = document.createElement("img"); 
-				var flag2 = document.createElement("img"); 
-				flag1.src =`https://www.exchangerate-api.com/img/docs/${new_x.charAt(0)}${new_x.charAt(1)}.gif` 
-				flag2.src =flag1.src*/
-				op1.innerHTML = new_x
-				op1.value=new_x
-				op2.innerHTML = new_x
-				op2.value=new_x
-				let r1 = document.getElementById("r1")
-				r1.appendChild(op1);
-				let r2 = document.getElementById("r2")
-				r2.appendChild(op2);
+				if(most_important_rates.indexOf(new_x) != -1){
+					var op1 = document.createElement("option"); 
+					var op2 = document.createElement("option"); 
+					/*var flag1 = document.createElement("img"); 
+					var flag2 = document.createElement("img"); 
+					flag1.src =`https://www.exchangerate-api.com/img/docs/${new_x.charAt(0)}${new_x.charAt(1)}.gif` 
+					flag2.src =flag1.src*/
+					op1.innerHTML = new_x
+					op1.value=new_x
+					op2.innerHTML = new_x
+					op2.value=new_x
+					let r1 = document.getElementById("r1")
+					r1.appendChild(op1);
+					let r2 = document.getElementById("r2")
+					r2.appendChild(op2);
+				}
 			}
 		}
 		async getJson(datex = 'latest',base = 'TRY'){
@@ -170,6 +209,12 @@
 			
 		}
 		async Count(){
+			let detaylar = document.getElementById("detail");
+			let deger =  document.getElementById("miktar");
+			if(isNaN(deger.value) || !deger.value.length ){
+				alert("only numbers are accepted")
+				deger.value = 1
+			}
 			let r1,r2,result
 			let lastUpdate = this.timeFormat(this.jsonInfo.time_last_update_unix)
 			let nexUpdate  = this.timeFormat(this.jsonInfo.time_next_update_unix)
@@ -185,12 +230,9 @@
 			let info = await fetch(urlx)
 			if(!info.ok) console.log("bir hat oluştu")
 			this.jsonInfo = await info.json()
-
 			let jsn = this.jsonInfo
-			let detaylar = document.getElementById("detail");
-			let deger =  document.getElementById("miktar")
 			let s = (result,r1,r2) => 
-				detaylar.innerText =` ${parseInt(deger.value)} ${k} = ${result.toFixed(4)}`
+				detaylar.innerText =` ${parseInt(deger.value)} ${k} = ${result.toFixed(4)} `
 				+`${h}\n${r1}\n${r2}\n last update: ${lastUpdate}\n next update: ${nexUpdate}`
 			
 			result=jsn['conversion_rate']*parseInt(deger.value)
@@ -219,7 +261,8 @@
 	let x1 = "91f1b66a8a"
 	let x2 = "141281e0f0086f"
 	let k = new kur(x1+x2)
-	
+	//document.getElementById("miktar").addEventListener("change", k.Count);
+	//document.getElementById("r2").addEventListener("change", k.Count);
 
 /*
 	let all_info,rates,updatingDate
