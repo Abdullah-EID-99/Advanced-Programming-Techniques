@@ -1,4 +1,6 @@
 <head>
+	
+	<link id =icon rel="icon" href="avatar.png">
 	<script src='https://cdn.plot.ly/plotly-2.6.3.min.js'></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style >
@@ -6,13 +8,13 @@
 </head>
 
 <body>
-	<p id="dt1">.</p>
-	<p id="dt2">.</p>
+	<p>From <b id="dt0"></b> to <b id="dt1" ></b></p>
+	<p>The graph below show the value of <b id="dt2"></b> accordin to the <b id="dt3" ></b></p>
 	<div id='myDiv'></div>
 	<script >
 		let key = localStorage.getItem('key')
 		async function showGraph() {
-			let d1, m1
+			let d1, m1, y1
 			let k_code, h_code
 			let k = localStorage.getItem('k'), h = localStorage.getItem('h')
 			let url_codes= `https://v6.exchangerate-api.com/v6/${key}/codes`
@@ -28,31 +30,41 @@
 					h_code = x[1]
 				}
 			}
-			dt1.innerText  = `From ${k_code} To ${h_code}`
-			dt2.innerText  = `The graph below show the value of 1 ${k_code} accordin to the ${h_code}`
+			dt0.innerText  = `${k_code}`
+			dt1.innerText  = `${h_code}`
+			dt2.innerText  = `1 ${k_code}`
+			dt3.innerText  = `${h_code}`
 			const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 			const d = new Date();
 			let day = d.getDate();
 			let month = months[d.getMonth()];
 			var xArray = [];
 			var yArray = [];
-			let datex = (y,m,d) => `${String(y)}-${String(m).padStart(2,0)}-${String(d).padStart(2,0)}` 
+			let datex = (y,m,d) => `${String(y)}/${String(m).padStart(2,0)}/${String(d).padStart(2,0)}` 
 			for(let i = day-6; i <= day; i++){
 				if(i<=0){
-					d1 = 30 + i
-					m1 = d.getMonth()
+					switch(d.getMonth()) {
+						case 0:
+						  m1 = 12
+						  y1 = d.getFullYear() - 1
+						  break;
+						default:
+						  m1==d.getMonth()
+					  }
+					  d1 = new Date(y1, m1, 0).getDate()+ i;
 				}else{
 					d1 = i
 					m1 = d.getMonth()+1
+					y1 = d.getFullYear()
 				}
-				let dd = datex(d.getFullYear(),m1,d1)
+				let dd = datex(y1,m1,d1)
 				month = months[m1-1];
-				let urlx= `https://v6.exchangerate-api.com/v6/${key}/history/${k}/${d.getFullYear()}/${m1}/${d1}`
+				let urlx= `https://v6.exchangerate-api.com/v6/${key}/history/${k}/${dd}`
 				let info = await fetch(urlx)
 				if(!info.ok) console.log("bir hat oluştu")
 				let jsn = await info.json()
 				jsn = jsn.conversion_rates
-				xArray.push(d1+' '+month)
+				xArray.push(d1+' '+month+' '+y1)
 				let result = ((1.0/jsn[k])*jsn[h]).toFixed(4)
 				yArray.push(result)
 				console.log(xArray[xArray.length-1]+'->'+yArray[yArray.length-1])
